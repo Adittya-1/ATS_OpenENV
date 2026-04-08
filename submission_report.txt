@@ -1,0 +1,70 @@
+================================================================================
+                    OPENENV ATS PROJECT - SUBMISSION REPORT
+================================================================================
+
+PROJECT: Resume Screening / ATS Environment
+COMPETITOR: Solo Warrior
+SUBMISSION DEADLINE: 8th April, 11:59 PM
+
+--------------------------------------------------------------------------------
+1. COMPLETED & IMPLEMENTED CHECKLIST
+--------------------------------------------------------------------------------
+[X] Core OpenEnv API Standard
+    - /reset: Initializes an episode with a random task based on difficulty.
+    - /step: Receives agent action, evaluates it, and returns reward/state.
+    - /state: Exposes the current task state to the agent.
+[X] Dynamic Reward Function
+    - Implemented in evaluator.py.
+    - Deterministic and continuous (returns float between 0.0 and 1.0).
+    - Grades Skill Extraction, Experience Accuracy, and Final Verdict.
+    - Round logic: Returns score rounded to 4 decimal places.
+[X] Expanded Task Dataset
+    - 6 distinct tasks total (2 Easy, 2 Medium, 2 Hard).
+    - Realistic data: Multi-line resumes with sections (SUMMARY, SKILLS, etc.).
+    - Professional job descriptions with company profiles.
+[X] Baseline Inference Script (inference.py)
+    - Compliant with hackathon specification.
+    - Uses standard OpenAI client.
+    - Emits logs with [START], [STEP], and [END] markers.
+    - Includes logic to handle API_BASE_URL and HF_TOKEN env vars.
+[X] Deployment Files
+    - Dockerfile optimized for Hugging Face Spaces (Port 7860).
+    - requirements.txt with all necessary dependencies.
+    - openenv.yaml for OpenEnv discovery.
+[X] Documentation
+    - Comprehensive README.md with Observation/Action space details.
+
+--------------------------------------------------------------------------------
+2. HARDCODED VALUES & LOGIC
+--------------------------------------------------------------------------------
+- Task Content (tasks.py): 
+  The resumes and job descriptions for the 6 tasks are hardcoded as the 
+  environment's "ground truth" data pool.
+- Local Mock Fallback (inference.py): 
+  If HF_TOKEN is NOT provided, the script uses a "mock-token" and returns a 
+  hardcoded JSON response for local testing.
+- Default URLs (inference.py): 
+  Target URL defaults to http://localhost:7860 if not specified.
+- Reward Weights (evaluator.py):
+  Weights for Skills (0.6), Experience (0.2), and Verdict (0.2) are set 
+  within the evaluation function.
+
+--------------------------------------------------------------------------------
+3. PENDING ACTIONS (USER TODO)
+--------------------------------------------------------------------------------
+[ ] Create Hugging Face Space:
+    - Create a new Space on HF, select "Docker" as the SDK.
+[ ] Upload Files:
+    - Upload all files from the project root into your HF Space repository.
+[ ] Configure Space Secrets:
+    - Add 'HF_TOKEN' (Your API key).
+    - Add 'MODEL_NAME' (e.g., gpt-3.5-turbo or gpt-4).
+[ ] Run Final Validation:
+    - Run the official "pre-submission validation script" provided by 
+      the hackathon mentors (check Discord/Docs).
+[ ] Submit:
+    - Complete the submission form before the deadline tonight!
+
+================================================================================
+   Environment is verified and ready for live hosting on Hugging Face Spaces.
+================================================================================

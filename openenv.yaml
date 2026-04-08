@@ -1,0 +1,8 @@
+version: "1.0"
+name: "resume-ats-screening"
+description: "Resume Screening Agentic Environment for ATS evaluation"
+type: "http"
+endpoints:
+  reset: "/reset"
+  step: "/step"
+  state: "/state"
