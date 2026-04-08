@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS OpenEnv Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0c111d;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --accent-color: #7c3aed;
+            --accent-glow: rgba(124, 58, 237, 0.3);
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --success: #10b981;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 90% 90%, rgba(124, 58, 237, 0.05) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+
+        .logo-area h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 100px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .hero h2 {
+            font-size: 48px;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .stat-card .val {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--accent-color);
+        }
+
+        .stat-card .label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-title {
+            margin-bottom: 32px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .explorer-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            margin-bottom: 60px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .tab {
+            padding: 20px 32px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: 0.2s;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            color: var(--text-primary);
+            background: rgba(124, 58, 237, 0.1);
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .explorer-content {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .content-box h4 {
+            margin-top: 0;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .content-box pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            font-family: inherit;
+            white-space: pre-wrap;
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.5;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #d1d5db;
+        }
+
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .api-card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .api-tag {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .tag-post { background: rgba(59, 130, 246, 0.1); color: #60a5fa; }
+        .tag-get { background: rgba(16, 185, 129, 0.1); color: #34d399; }
+
+        .api-card h5 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+        }
+
+        .api-card p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 80px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            padding-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .explorer-content { grid-template-columns: 1fr; }
+            .hero h2 { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-area">
+                <h1>OpenEnv.ATS</h1>
+            </div>
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                System Operational
+            </div>
+        </header>
+
+        <section class="hero">
+            <h2>Environment Explorer</h2>
+            <p>A specialized real-world environment for benchmarking LLM agents on Resume Screening and Applicant Tracking logic.</p>
+        </section>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="val">06</div>
+                <div class="label">Total Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="val">03</div>
+                <div class="label">Difficulty Tiers</div>
+            </div>
+            <div class="stat-card">
+                <div class="val">1.0</div>
+                <div class="label">Max Reward</div>
+            </div>
+            <div class="stat-card">
+                <div class="val">∞</div>
+                <div class="label">Evaluations</div>
+            </div>
+        </div>
+
+        <h3 class="section-title">Task Dataset Explorer</h3>
+        <div class="explorer-card">
+            <div class="tabs">
+                <div class="tab active" onclick="loadDifficulty('easy')">Easy Tier</div>
+                <div class="tab" onclick="loadDifficulty('medium')">Medium Tier</div>
+                <div class="tab" onclick="loadDifficulty('hard')">Hard Tier</div>
+            </div>
+            <div class="explorer-content" id="explorerContent">
+                <div class="content-box">
+                    <h4>Job Description</h4>
+                    <pre id="jobDesc">Loading...</pre>
+                </div>
+                <div class="content-box">
+                    <h4>Sample Resume</h4>
+                    <pre id="resume">Loading...</pre>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="section-title">API Interface</h3>
+        <div class="api-grid">
+            <div class="api-card">
+                <div class="api-tag tag-post">POST</div>
+                <h5>/reset</h5>
+                <p>Initializes a task episode. Returns the initial observation and metadata.</p>
+            </div>
+            <div class="api-card">
+                <div class="api-tag tag-post">POST</div>
+                <h5>/step</h5>
+                <p>Submits the agent's evaluation action and returns result and reward.</p>
+            </div>
+            <div class="api-card">
+                <div class="api-tag tag-get">GET</div>
+                <h5>/state</h5>
+                <p>Retrieves the current world state and task completion status.</p>
+            </div>
+        </div>
+
+        <footer>
+            Built for Scalar OpenEnv Hackathon Round 1 • 2026
+        </footer>
+    </div>
+
+    <script>
+        let taskData = {};
+
+        async function init() {
+            try {
+                const res = await fetch('/tasks-data');
+                taskData = await res.json();
+                loadDifficulty('easy');
+            } catch (e) {
+                console.error("Failed to load task data", e);
+            }
+        }
+
+        function loadDifficulty(diff) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+                if (t.innerText.toLowerCase().includes(diff)) t.classList.add('active');
+            });
+
+            const tasks = taskData[diff];
+            if (tasks && tasks.length > 0) {
+                const task = tasks[0]; // Show first for preview
+                document.getElementById('jobDesc').innerText = task.job_description;
+                document.getElementById('resume').innerText = task.resume;
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
