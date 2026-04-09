@@ -19,4 +19,5 @@ COPY --chown=user . .
 EXPOSE 7860
 
 # We start the FastAPI application on 0.0.0.0:7860
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
+# Note: we use server.app:app because the code is now in the 'server' directory
+CMD ["uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "7860"]

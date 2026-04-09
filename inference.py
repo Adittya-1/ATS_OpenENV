@@ -4,24 +4,21 @@ import requests
 from openai import OpenAI
 import time
 
-API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:7860")
+# Environment config for the environment server
+# (We use a separate variable to avoid clashing with the LLM proxy)
+ENV_URL = os.getenv("ENV_URL", "http://localhost:7860")
+
+# Pre-Submission Checklist compliant LLM variables
+API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "gpt-3.5-turbo")
-HF_TOKEN = os.getenv("HF_TOKEN")
+HF_TOKEN = os.getenv("HF_TOKEN")  # No default for the token
 
 print("[START] Inference Process Started")
 
-# Fallback fake client if no token provided (for local testing without keys)
-# The hackathon will provide an actual API key via HF_TOKEN
-if not HF_TOKEN:
-    print("Warning: HF_TOKEN not found, assuming local or mock run.")
-else:
-    # Adjust base_url if needed by OpenEnv, otherwise default OpenAI endpoint
-    # Sometimes HF_TOKEN is used as an OpenAI compatible api_key
-    pass
-
+# Initialize the OpenAI client using the proxy URL and token provided by the platform
 client = OpenAI(
-    api_key=HF_TOKEN if HF_TOKEN else "mock-token"
-    # base_url="https://api.openai.com/v1" # Customize if needed
+    base_url=API_BASE_URL,
+    api_key=HF_TOKEN
 )
 
 def evaluate_with_llm(job_description: str, resume: str) -> dict:
@@ -47,15 +44,6 @@ def evaluate_with_llm(job_description: str, resume: str) -> dict:
     )
 
     try:
-        # Mocking logic if no real token for successful local execution without hitting API limit
-        if HF_TOKEN is None or HF_TOKEN == "":
-            return {
-                "matched_skills": ["Python", "SQL", "JavaScript"],
-                "missing_skills": [],
-                "experience_years": 2,
-                "is_suitable": True
-            }
-
         response = client.chat.completions.create(
             model=MODEL_NAME,
             messages=[
@@ -82,7 +70,7 @@ def run_task(difficulty: str):
     
     # 1. Reset Environment
     try:
-        reset_res = requests.post(f"{API_BASE_URL}/reset", json={"difficulty": difficulty})
+        reset_res = requests.post(f"{ENV_URL}/reset", json={"difficulty": difficulty})
         reset_res.raise_for_status()
         state = reset_res.json()["observation"]
     except Exception as e:
@@ -100,7 +88,7 @@ def run_task(difficulty: str):
     
     # 4. Step Step Action
     try:
-        step_res = requests.post(f"{API_BASE_URL}/step", json={"action": agent_action_payload})
+        step_res = requests.post(f"{ENV_URL}/step", json={"action": agent_action_payload})
         step_res.raise_for_status()
         result = step_res.json()
         reward = result["reward"]
